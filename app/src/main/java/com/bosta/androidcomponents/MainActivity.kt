@@ -2,6 +2,7 @@ package com.bosta.androidcomponents
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
+import com.bosta.androidcomponents.broadcastreciever.AirPlaneModeReceiver
 import com.bosta.androidcomponents.intent.SecondActivity
 import com.bosta.androidcomponents.ui.theme.AndroidComponentsTheme
 
@@ -25,9 +27,11 @@ import com.bosta.androidcomponents.ui.theme.AndroidComponentsTheme
  */
 
 class MainActivity : ComponentActivity() {
+    private val airPlaneModeReceiver = AirPlaneModeReceiver()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        registerReceiver(airPlaneModeReceiver, IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED))
         setContent {
             AndroidComponentsTheme {
                 Column(modifier = Modifier.fillMaxSize()) {
@@ -117,8 +121,20 @@ class MainActivity : ComponentActivity() {
                     ) {
                         Text(text = "Go to Email")
                     }
+                    // Sending Broadcast It will be received by all apps that are registered to it
+                    // If you want to send it to specific app add the package name
+                    Button(onClick = {
+                        sendBroadcast(Intent("TEST_ACTION"))
+                    }) {
+                        Text(text = "Send broadcast")
+                    }
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(airPlaneModeReceiver)
     }
 }
