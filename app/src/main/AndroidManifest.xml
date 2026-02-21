@@ -24,7 +24,26 @@
         <activity
             android:name=".intent.SecondActivity"
             android:exported="true">
+
         </activity>
     </application>
+    <!--
+    MANIFEST QUERIES — Package Visibility
+    ──────────────────────────────────────
+    Android 11+ (API 30) restricts which apps your app can "see"
+    by default. Without <queries>, resolveActivity() always returns
+    null — even if an email app IS installed.
 
+    This block tells Android:
+    "My app needs to know about apps that handle ACTION_SEND with text/plain"
+
+    Without it  → resolveActivity() returns null → intent never fires
+    With it     → Android grants visibility → resolveActivity() works correctly
+-->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.SEND" />
+            <data android:mimeType="text/plain" />
+        </intent>
+    </queries>
 </manifest>

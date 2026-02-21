@@ -1,6 +1,5 @@
 package com.bosta.androidcomponents
 
-import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.os.Bundle
@@ -65,7 +64,6 @@ class MainActivity : ComponentActivity() {
                      *  If the app is not installed → ActivityNotFoundException is thrown.
                      *  Always handle this case in production code.
                      */
-
                     Button(onClick = {
                         Intent(Intent.ACTION_MAIN).also {
                             it.`package` = "com.google.android.youtube"
@@ -78,6 +76,46 @@ class MainActivity : ComponentActivity() {
                         }
                     }) {
                         Text(text = "Go to Youtube")
+                    }
+                    /**
+                     * IMPLICIT INTENT — Share/Send Content
+                     * ──────────────────────────────────────
+                     * Does NOT specify a target component. Instead, declares an ACTION
+                     * and lets Android find all apps that can handle it at runtime.
+                     *
+                     * In this case → any app that can send plain text (Email, WhatsApp, etc.)
+                     *
+                     * How it works:
+                     *  1. Intent is created with ACTION_SEND — "I want to send something"
+                     *  2. type = "text/plain" — narrows it to text-sharing apps only
+                     *  3. Extras are attached (recipient, subject, body)
+                     *  4. resolveActivity() checks if ANY app can handle this intent
+                     *  5. If found → Android shows a chooser (Gmail, Outlook, etc.)
+                     *  6. If not found → nothing happens (no crash)
+                     *
+                     * Intent Extras:
+                     *  - EXTRA_EMAIL   → pre-fills the recipient field
+                     *  - EXTRA_SUBJECT → pre-fills the subject field
+                     *  - EXTRA_TEXT    → pre-fills the body content
+                     *
+                     * Why resolveActivity()?
+                     *  Safety check — if no app can handle ACTION_SEND,
+                     *  calling startActivity() directly would crash the app.
+                     */
+                    Button(onClick = {
+                        val intent = Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            // Intent Extras
+                            putExtra(Intent.EXTRA_EMAIL, "test@test.com")
+                            putExtra(Intent.EXTRA_SUBJECT, "Test subject")
+                            putExtra(Intent.EXTRA_TEXT, "Content o f my email")
+                        }
+                        if (intent.resolveActivity(packageManager) != null) {
+                            startActivity(intent)
+                        }
+                    }
+                    ) {
+                        Text(text = "Go to Email")
                     }
                 }
             }
