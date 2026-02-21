@@ -24,7 +24,6 @@
         <activity
             android:name=".intent.SecondActivity"
             android:exported="true">
-
         </activity>
     </application>
 
