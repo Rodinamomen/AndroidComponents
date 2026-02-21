@@ -21,10 +21,52 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!--
+    IMPLICIT INTENT RECEIVER — SecondActivity
+    ══════════════════════════════════════════
+    Registers SecondActivity as a target for apps that want to share images.
+    Android reads this intent-filter at runtime to determine if this
+    Activity can handle an incoming implicit intent.
+
+    android:exported="true"
+        Required when using intent-filters — allows external apps
+        (Chrome, Gallery, etc.) to launch this Activity.
+
+    android:launchMode="singleTop"
+        If SecondActivity is already at the top of the back stack,
+        Android reuses the existing instance and calls onNewIntent()
+        instead of creating a new one.
+
+    intent-filter:
+        Tells Android "this Activity can handle the following intent"
+
+        ACTION_SEND
+            → The sender wants to share/send data to another component.
+
+        CATEGORY_DEFAULT
+            → Required for any Activity that receives implicit intents.
+              Without it, Android will never route intents to this Activity.
+
+        mimeType="image/*"
+            → Narrows the filter to image sharing only (jpg, png, gif, etc.)
+              Text, video, or other types will NOT match this Activity.
+
+    Full Flow:
+        User shares image in Chrome
+            → Android scans all installed apps for ACTION_SEND + image/*
+            → Finds this Activity via intent-filter
+            → Launches SecondActivity with image URI in EXTRA_STREAM
+-->
         <activity
             android:name=".intent.SecondActivity"
-            android:exported="true">
-
+            android:exported="true"
+            android:label="@string/app_name"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
         </activity>
     </application>
     <!--
