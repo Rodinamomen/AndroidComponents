@@ -1,5 +1,6 @@
 package com.bosta.androidcomponents
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -24,6 +25,7 @@ import com.bosta.androidcomponents.ui.theme.AndroidComponentsTheme
  */
 
 class MainActivity : ComponentActivity() {
+    @SuppressLint("QueryPermissionsNeeded")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -67,7 +69,10 @@ class MainActivity : ComponentActivity() {
                     Button(onClick = {
                         Intent(Intent.ACTION_MAIN).also {
                             it.`package` = "com.google.android.youtube"
-                            startActivity(it)
+                            // To check first if the app is installed or not.
+                            if (it.resolveActivity(packageManager) != null) {
+                                startActivity(it)
+                            }
                         }
                     }) {
                         Text(text = "Go to Youtube")
