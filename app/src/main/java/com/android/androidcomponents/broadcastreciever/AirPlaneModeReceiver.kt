@@ -1,4 +1,4 @@
-package com.bosta.androidcomponents.broadcastreciever
+package com.android.androidcomponents.broadcastreciever
 
 import android.content.BroadcastReceiver
 import android.content.Context

@@ -1,4 +1,4 @@
-package com.bosta.androidcomponents
+package com.android.androidcomponents
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
@@ -12,9 +12,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
-import com.bosta.androidcomponents.broadcastreciever.AirPlaneModeReceiver
-import com.bosta.androidcomponents.intent.SecondActivity
-import com.bosta.androidcomponents.ui.theme.AndroidComponentsTheme
+import androidx.core.app.ActivityCompat
+import com.android.androidcomponents.broadcastreciever.AirPlaneModeReceiver
+import com.android.androidcomponents.intent.SecondActivity
+import com.android.androidcomponents.services.background.BackGroundService
+import com.android.androidcomponents.services.foreground.ForeGroundService
+import com.android.androidcomponents.ui.theme.AndroidComponentsTheme
 
 /**
  * -------------------------------------------------------
@@ -30,8 +33,14 @@ class MainActivity : ComponentActivity() {
     private val airPlaneModeReceiver = AirPlaneModeReceiver()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        startService(Intent(this, BackGroundService::class.java))
         enableEdgeToEdge()
         registerReceiver(airPlaneModeReceiver, IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED))
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+            0
+        )
         setContent {
             AndroidComponentsTheme {
                 Column(modifier = Modifier.fillMaxSize()) {
@@ -127,6 +136,23 @@ class MainActivity : ComponentActivity() {
                         sendBroadcast(Intent("TEST_ACTION"))
                     }) {
                         Text(text = "Send broadcast")
+                    }
+
+                    Button(onClick = {
+                        Intent(applicationContext, ForeGroundService::class.java).also {
+                            it.action = ForeGroundService.Actions.START.toString()
+                            startService(it)
+                        }
+                    }){
+                        Text(text = "Send Foreground service")
+                    }
+                    Button(onClick = {
+                        Intent(applicationContext, ForeGroundService::class.java).also {
+                            it.action = ForeGroundService.Actions.STOP.toString()
+                            startService(it)
+                        }
+                    }){
+                        Text(text = "Stop Foreground service")
                     }
                 }
             }

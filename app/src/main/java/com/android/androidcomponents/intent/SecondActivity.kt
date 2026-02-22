@@ -1,4 +1,4 @@
-package com.bosta.androidcomponents.intent
+package com.android.androidcomponents.intent
 
 import android.content.Intent
 import android.net.Uri

@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application
+        android:name="com.android.androidcomponents.services.foreground.RunningApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -11,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AndroidComponents">
         <activity
-            android:name=".MainActivity"
+            android:name="com.android.androidcomponents.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.AndroidComponents">
@@ -58,7 +63,7 @@
             → Launches SecondActivity with image URI in EXTRA_STREAM
 -->
         <activity
-            android:name=".intent.SecondActivity"
+            android:name="com.android.androidcomponents.intent.SecondActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:launchMode="singleTop">
@@ -68,6 +73,11 @@
                 <data android:mimeType="image/*" />
             </intent-filter>
         </activity>
+
+        <service android:name="com.android.androidcomponents.services.background.BackGroundService" />
+        <service
+            android:name="com.android.androidcomponents.services.foreground.ForeGroundService"
+            android:foregroundServiceType="dataSync" />
     </application>
     <!--
     MANIFEST QUERIES — Package Visibility

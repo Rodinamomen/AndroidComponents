@@ -1,4 +1,4 @@
-package com.bosta.androidcomponents
+package com.android.androidcomponents
 
 import org.junit.Test
 

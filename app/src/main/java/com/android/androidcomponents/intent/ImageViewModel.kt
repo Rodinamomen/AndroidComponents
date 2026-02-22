@@ -1,4 +1,4 @@
-package com.bosta.androidcomponents.intent
+package com.android.androidcomponents.intent
 
 import android.net.Uri
 import androidx.compose.runtime.mutableStateOf

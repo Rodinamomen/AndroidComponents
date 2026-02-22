@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.bosta.androidcomponents"
+    namespace = "com.android.androidcomponents"
     compileSdk {
         version = release(36)
     }
