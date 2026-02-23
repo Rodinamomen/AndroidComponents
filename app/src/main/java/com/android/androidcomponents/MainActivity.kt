@@ -14,13 +14,14 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.text.input.KeyboardType.Companion.Uri
+import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.work.Constraints
 import androidx.work.OneTimeWorkRequestBuilder
@@ -206,14 +207,17 @@ class MainActivity : ComponentActivity() {
                     // handling caching and decoding off the main thread automatically.
                     viewModel.unCompressedUri?.let {
                         Text("unCompressedUri")
-                        AsyncImage(model = it, contentDescription = null)
+                        AsyncImage(
+                            modifier = Modifier.size(50.dp),
+                            model = it, contentDescription = null
+                        )
                     }
 
                     // Display the compressed image once the worker has finished and the ViewModel
                     // has been updated with the result Bitmap.
                     viewModel.compressedBitmap?.let {
                         Text("compressedBitmap")
-                        Image(bitmap = it.asImageBitmap(), contentDescription = null)
+                        Image(modifier = Modifier.size(50.dp), bitmap = it.asImageBitmap(), contentDescription = null)
                     }
                 }
             }
@@ -245,12 +249,15 @@ class MainActivity : ComponentActivity() {
         } else {
             intent?.getParcelableExtra<Uri>(Intent.EXTRA_STREAM) as? Uri // 👈 explicit cast
         } ?: return) as Uri // If no URI was shared, there is nothing to compress — exit early.
+        contentResolver.takePersistableUriPermission(
+            uri,
+            Intent.FLAG_GRANT_READ_URI_PERMISSION
+        )
         viewModel.updateUnCompressedUri(uri)
         // Build a one-time WorkRequest targeting our PhotoCompressionWorker.
         // OneTimeWorkRequest means this task will run once and not repeat.
         // Use PeriodicWorkRequest instead if the task should repeat on a schedule.
         val request = OneTimeWorkRequestBuilder<PhotoCompressionWorker>()
-
             // Pass input data to the worker as key-value pairs.
             // The worker will read these values inside doWork() via params.inputData.
             .setInputData(
@@ -268,9 +275,6 @@ class MainActivity : ComponentActivity() {
             // Set constraints that must be satisfied before WorkManager executes this task.
             // requiresStorageNotLow = true means the task will be delayed if the device
             // is reporting low storage, preventing the worker from writing to disk unsafely.
-            .setConstraints(
-                Constraints(requiresStorageNotLow = true)
-            )
             .build()
         viewModel.updateWorkId(request.id)
         // Hand the request off to WorkManager. It will schedule and execute the worker
